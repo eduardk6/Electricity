@@ -47,30 +47,26 @@ The project uses two distinct API datasets. Both datasets satisfy the course req
 ### Dataset 1: Elering Live System and Planned Grid Data
 
 **Source:** Elering Dashboard API  
-**Endpoint:** `https://dashboard.elering.ee/api/system/with-plan/csv`  
-**Theme:** energy, grid operations, renewable production, planned grid losses  
+**Endpoint:** `https://dashboard.elering.ee/api/system/with-plan/csv`, joined with `https://dashboard.elering.ee/api/nps/price` for Estonian NPS price  
+**Theme:** energy, grid operations, renewable production, planned grid losses, electricity market price  
 **Update frequency:** 15 minute intervals in the exported sample; can be pulled regularly with Airflow  
-**Example CSV:** `data/elering_system_with_plan_2026-09-01_2026-09-14.csv`  
-**Sample size:** 1345 data rows and 18 columns
+**Example CSV:** `data/elering_system_with_plan_nps_price_2026-09-01_2026-09-14.csv`  
+**Sample size:** 1345 data rows and 10 columns
 
 Selected schema attributes:
 
 1. `timestamp_utc`
 2. `datetime_estonia`
-3. `production_mw`
-4. `consumption_mw`
-5. `wind_production_mw`
-6. `solar_production_mw`
-7. `frequency_hz`
-8. `system_balance_mw`
-9. `ac_balance_mw`
-10. `planned_production_mw`
-11. `planned_consumption_mw`
-12. `planned_losses_mw`
-13. `planned_system_balance_mw`
-14. `planned_ac_balance_mw`
+3. `consumption_mw`
+4. `planned_consumption_mw`
+5. `planned_losses_mw`
+6. `nps_price_eur_mwh`
+7. `production_mw`
+8. `wind_production_mw`
+9. `solar_production_mw`
+10. `system_balance_mw`
 
-This dataset is used to analyze national electricity consumption, production, renewable production, planned grid losses, system balance, and differences between planned and actual system behavior.
+This dataset is used to analyze national electricity consumption, production, renewable production, planned grid losses, NPS electricity price, system balance, and differences between planned and actual system behavior.
 
 ### Dataset 2: Keskkonnaagentuur Hourly Weather Observation Data
 
@@ -79,7 +75,7 @@ This dataset is used to analyze national electricity consumption, production, re
 **Theme:** environment, weather, station observations  
 **Update frequency:** hourly by weather station  
 **Example CSV:** `data/weather_hourly_observations_2026-09-01_2026-09-14.csv`  
-**Sample size:** 33264 data rows and 25 columns
+**Sample size:** 33264 data rows and 9 columns
 
 Selected actual API schema attributes:
 
@@ -89,19 +85,11 @@ Selected actual API schema attributes:
 4. `Jaam`
 5. `tains`
 6. `ws10ma`
-7. `ws1hx`
-8. `wd10ma`
-9. `pr1hs`
-10. `rhins`
-11. `qffins`
-12. `qffmuutus`
-13. `vis1ma`
-14. `uvindex`
-15. `pw15maEng`
-16. `pw15maEst`
-17. `ccins`
+7. `pr1hs`
+8. `rhins`
+9. `pw15maEng`
 
-This dataset is used to calculate hourly weather indicators such as average outdoor temperature, wind speed, precipitation, humidity, pressure, visibility, and weather condition groups. These indicators are joined with the Elering dataset by timestamp after weather observations are aggregated from station level to hourly national or grid area level.
+This dataset is used to calculate hourly weather indicators such as average outdoor temperature, wind speed, precipitation, humidity, and weather condition groups. These indicators are joined with the Elering dataset by timestamp after weather observations are aggregated from station level to hourly national or grid area level.
 
 ## Data Architecture
 
