@@ -18,6 +18,7 @@ from urllib.request import Request, urlopen
 
 
 ELERING_SYSTEM_WITH_PLAN_URL = "https://dashboard.elering.ee/api/system/with-plan/csv"
+ELERING_NPS_PRICE_URL = "https://dashboard.elering.ee/api/nps/price"
 WEATHER_HOURLY_URL = "https://publicapi.envir.ee/v1/combinedWeatherData/observationDataHourly"
 
 ELERING_COLUMNS = [
@@ -104,6 +105,23 @@ def fetch_elering_system_with_plan(start_date: date, end_date: date, output_dir:
     return output_path
 
 
+def fetch_nps_price(start_date: date, end_date: date, output_dir: Path) -> Path:
+    # End is exclusive for the API window, so include the whole requested end date.
+    query = urlencode({"start": iso_utc(start_date), "end": iso_utc(end_date + timedelta(days=1))})
+    payload = fetch_json(f"{ELERING_NPS_PRICE_URL}?{query}")
+    records = payload.get("data", {}).get("ee", [])
+    if not records:
+        raise RuntimeError("Elering NPS price endpoint returned no EE records")
+
+    output_path = output_dir / f"nps_price_ee_{start_date}_{end_date}.csv"
+    with output_path.open("w", newline="", encoding="utf-8") as file:
+        writer = csv.DictWriter(file, fieldnames=["timestamp", "price"])
+        writer.writeheader()
+        writer.writerows(records)
+
+    return output_path
+
+
 def fetch_weather_hourly(start_date: date, end_date: date, output_dir: Path, delay: float) -> Path:
     records: list[dict[str, object]] = []
 
@@ -153,9 +171,11 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     elering_path = fetch_elering_system_with_plan(start_date, end_date, output_dir)
+    nps_path = fetch_nps_price(start_date, end_date, output_dir)
     weather_path = fetch_weather_hourly(start_date, end_date, output_dir, args.weather_delay)
 
     print(f"Wrote {elering_path}")
+    print(f"Wrote {nps_path}")
     print(f"Wrote {weather_path}")
 
 
