@@ -5,7 +5,6 @@ Repository files for Project 1:
 - `data/` - sample API data
 - `scripts/` - API and sample-data scripts
 - `sql/` - demo SQL queries
-- `data_dictionary/` - fact table and dimension tables
 
 ## Sample Data
 
