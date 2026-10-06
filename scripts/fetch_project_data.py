@@ -85,7 +85,6 @@ def iso_utc(day: date) -> str:
 
 
 def fetch_elering_system_with_plan(start_date: date, end_date: date, output_dir: Path) -> Path:
-    # End is exclusive for the API window, so include the whole requested end date.
     query = urlencode({"start": iso_utc(start_date), "end": iso_utc(end_date + timedelta(days=1))})
     text = fetch_text(f"{ELERING_SYSTEM_WITH_PLAN_URL}?{query}")
 
@@ -106,7 +105,6 @@ def fetch_elering_system_with_plan(start_date: date, end_date: date, output_dir:
 
 
 def fetch_nps_price(start_date: date, end_date: date, output_dir: Path) -> Path:
-    # End is exclusive for the API window, so include the whole requested end date.
     query = urlencode({"start": iso_utc(start_date), "end": iso_utc(end_date + timedelta(days=1))})
     payload = fetch_json(f"{ELERING_NPS_PRICE_URL}?{query}")
     records = payload.get("data", {}).get("ee", [])

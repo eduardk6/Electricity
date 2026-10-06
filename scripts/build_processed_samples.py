@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """Build processed sample CSVs from raw API ingestion files.
 
-This mirrors the first transformation step that would later be handled by dbt:
-
 * keep only hourly Elering rows from the raw 15-minute source;
 * join Elering rows to raw NPS price by timestamp;
 * keep only the analytical Elering columns needed for the questions;
